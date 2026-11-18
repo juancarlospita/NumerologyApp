@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Número Kua y brújula para dormir</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--bg:#f1e8d4;--bg2:#e4d5b0;--ink:#1b2a49;--muted:#5b6381;--card:#faf4e5;--line:#d6c6a0;--good:#1f7a6d;--bad:#c4432c;--brass:#94651a;--on:#fff;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1128;--bg2:#18255a;--ink:#f0e6cf;--muted:#9aa3c0;--card:#111b3a;--line:#26335f;--good:#4fd1b8;--bad:#ff7d63;--brass:#e3b24f;--on:#0a1128;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0a1128;--bg2:#18255a;--ink:#f0e6cf;--muted:#9aa3c0;--card:#111b3a;--line:#26335f;--good:#4fd1b8;--bad:#ff7d63;--brass:#e3b24f;--on:#0a1128;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100%;position:relative;background:var(--bg) radial-gradient(120% 60% at 50% 0,var(--bg2),transparent 70%) no-repeat;color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body::before{content:"";position:absolute;inset:0 0 auto 0;height:520px;pointer-events:none;background:repeating-radial-gradient(circle at 50% -8%,transparent 0 46px,var(--line) 46px 47px);-webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent);opacity:.7}
+main{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:26px 16px 44px;display:grid;gap:16px}
+h1,h2,.num{font-family:"Newsreader",Georgia,serif}
+header{display:flex;align-items:center;gap:14px}
+header svg{flex:none;width:52px;height:52px}
+h1{font-size:30px;line-height:1.1;margin:0;font-weight:600}
+h2{font-size:21px;line-height:1.2;margin:0;font-weight:600}
+h3{font-size:17px;margin:0;font-weight:600}
+p{margin:0}
+.sub{color:var(--muted);margin-top:4px;font-size:15px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:16px;box-shadow:0 16px 30px -22px rgba(10,17,40,.55),inset 0 0 0 4px var(--card),inset 0 0 0 5px var(--line)}
+.field{display:grid;gap:8px}
+.field>span{font-weight:600;font-size:15px}
+.ctl{width:100%;height:52px;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:0 14px;font:inherit;color:var(--ink);-webkit-appearance:none;appearance:none;display:block;text-align:left}
+input[type=date]::-webkit-date-and-time-value{text-align:left}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{display:grid;place-items:center;height:42px;border-radius:10px;cursor:pointer;font-weight:600;color:var(--muted);transition:background .15s,color .15s}
+.seg input:checked+label{background:var(--ink);color:var(--bg)}
+.seg input:focus-visible+label{outline:3px solid var(--brass);outline-offset:2px}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;height:52px;border:1px solid var(--ink);border-radius:12px;background:var(--ink);color:var(--bg);font:inherit;font-weight:600;cursor:pointer;transition:transform .1s,opacity .15s}
+.btn:active{transform:scale(.98)}
+.btn.alt{background:transparent;color:var(--ink)}
+.btn[disabled]{opacity:.55;cursor:default}
+.btn:focus-visible,.ctl:focus-visible,summary:focus-visible,input[type=range]:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+.err{color:var(--bad);font-size:14.5px}
+.err:empty{display:none}
+#res{display:none;gap:16px}
+.hero{display:flex;align-items:center;gap:18px}
+.ring{flex:none;width:100px;height:100px;border-radius:50%;border:3px solid var(--brass);box-shadow:inset 0 0 0 6px var(--card),inset 0 0 0 7px var(--line);display:grid;place-items:center;font-size:56px;font-weight:600;color:var(--brass);line-height:1}
+.chip{display:inline-flex;align-items:center;height:30px;padding:0 12px;border-radius:99px;border:1px solid var(--line);font-size:14px;font-weight:600;white-space:nowrap}
+.chip.g{border-color:var(--good);color:var(--good)}.chip.b{border-color:var(--bad);color:var(--bad)}
+.sec{display:grid;gap:10px}
+.note{color:var(--muted);font-size:14.5px}
+.list{display:grid;gap:8px}
+details.o{border:1px solid var(--line);border-left:4px solid var(--good);border-radius:12px;padding:0 14px;background:var(--bg)}
+details.o.b{border-left-color:var(--bad)}
+details.o summary{min-height:56px;display:grid;grid-template-columns:1fr auto 18px;align-items:center;gap:10px;cursor:pointer;list-style:none}
+details.o summary::-webkit-details-marker{display:none}
+details.o summary::after{content:"+";font-size:20px;color:var(--muted);text-align:center}
+details.o[open] summary::after{content:"–"}
+.sn{display:grid;line-height:1.25}.sn b{font-weight:600}.sn small{color:var(--muted);font-size:13.5px}
+.st{color:var(--brass);letter-spacing:1px;font-size:14px;white-space:nowrap}
+.tx{padding:0 0 14px;color:var(--ink)}
+svg#comp{display:block;width:100%;max-width:340px;height:auto;margin:0 auto}
+svg#comp [data-d]{cursor:pointer}
+.status{display:flex;align-items:center;gap:12px;min-height:72px;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--bg);font-weight:600;transition:border-color .2s}
+.status i{flex:none;width:14px;height:14px;border-radius:50%;background:var(--line)}
+.status[data-s=good]{border-color:var(--good)}.status[data-s=good] i{background:var(--good)}
+.status[data-s=bad]{border-color:var(--bad)}.status[data-s=bad] i{background:var(--bad)}
+.dd{padding:14px 16px;border-radius:14px;border:1px solid var(--line);border-left:4px solid var(--line);background:var(--bg);display:grid;gap:4px}
+.dd.g{border-left-color:var(--good)}.dd.b{border-left-color:var(--bad)}
+.g{color:var(--good)}.b{color:var(--bad)}
+details.m{border:1px solid var(--line);border-radius:12px;padding:0 14px}
+details.m summary{min-height:48px;display:flex;align-items:center;cursor:pointer;font-weight:600;list-style:none}
+details.m summary::-webkit-details-marker{display:none}
+details.m summary::after{content:"+";margin-left:auto;font-size:20px;color:var(--muted)}
+details.m[open] summary::after{content:"–"}
+details.m>div{padding:0 0 14px;display:grid;gap:10px}
+input[type=range]{width:100%;accent-color:var(--brass);margin:0;height:28px}
+.foot{font-size:13.5px;color:var(--muted);text-align:center;padding:0 6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24" fill="none" stroke="var(--brass)" stroke-width="2"/><circle cx="26" cy="26" r="15" fill="none" stroke="var(--line)" stroke-width="1.5"/><path d="M26 6 L30 26 L26 46 L22 26Z" fill="var(--bad)"/><path d="M26 46 L22 26 L30 26Z" fill="var(--good)"/><circle cx="26" cy="26" r="2.5" fill="var(--card)"/></svg>
+  <div><h1>Tu dirección para dormir</h1><p class="sub">Número Kua, brújula y PDF en un solo lugar.</p></div>
+</header>
+
+<section class="card" aria-labelledby="t1">
+  <h2 id="t1">Calcula tu número Kua</h2>
+  <label class="field"><span>Fecha de nacimiento</span><input class="ctl" id="fecha" type="date" min="1900-01-01"></label>
+  <div class="field"><span id="gl">Género</span>
+    <div class="seg" role="radiogroup" aria-labelledby="gl">
+      <input type="radio" name="gen" id="gm" value="m" checked><label for="gm">Hombre</label>
+      <input type="radio" name="gen" id="gf" value="f"><label for="gf">Mujer</label>
+    </div>
+  </div>
+  <button class="btn" id="calc" type="button">Calcular</button>
+  <p class="err" id="err" role="alert"></p>
+</section>
+
+<div id="res">
+  <section class="card" aria-labelledby="t2">
+    <div class="hero"><div class="ring num" id="kn">0</div>
+      <div class="sec" style="gap:8px"><h2 id="t2">Tu número Kua</h2><div><span class="chip" id="kg"></span></div><p class="note" id="kd"></p></div>
+    </div>
+    <p class="note">Toca cada orientación para ver qué significa.</p>
+    <div class="sec"><h3 class="g">Orientaciones favorables</h3><div class="list" id="fav"></div></div>
+    <div class="sec"><h3 class="b">Orientaciones no favorables</h3><div class="list" id="unf"></div></div>
+  </section>
+
+  <section class="card" aria-labelledby="t3">
+    <div class="sec"><h2 id="t3">Brújula</h2>
+    <p class="note">Apoya el móvil plano en la cama, con la parte de arriba hacia donde irá tu cabeza. También puedes tocar cada sector para ver su significado.</p></div>
+    <svg id="comp" viewBox="0 0 300 300" role="img" aria-label="Brújula con tus orientaciones favorables y no favorables"></svg>
+    <div class="status" id="status" data-s="idle" aria-live="polite"><i></i><span id="stx">Activa la brújula para empezar.</span></div>
+    <div class="dd" id="dd" style="display:none" aria-live="polite"></div>
+    <button class="btn" id="start" type="button">Activar brújula</button>
+    <details class="m"><summary>Ajuste manual</summary><div>
+      <p class="note">Si tu móvil no tiene sensor, mueve el control para simular hacia dónde apunta tu cabecera.</p>
+      <input id="man" type="range" min="0" max="359" value="0" aria-label="Rumbo manual en grados">
+    </div></details>
+  </section>
+
+  <section class="card" aria-labelledby="t4">
+    <div class="sec"><h2 id="t4">Guárdalo</h2><p class="note">PDF con tu número y el significado de cada orientación.</p></div>
+    <button class="btn alt" id="pdf" type="button">Descargar PDF</button>
+    <p class="err" id="perr" role="alert"></p>
+  </section>
+</div>
+
+<p class="foot">Práctica tradicional de Feng Shui (escuela Ba Zhai), sin respaldo científico. Úsala como orientación cultural, no para decisiones de salud o dinero. El cálculo usa el año de nacimiento tal cual.</p>
+</main>
+
+<script>
+(function(){
+var DIRS=['N','NE','E','SE','S','SO','O','NO'];
+var NAME={N:'Norte',NE:'Noreste',E:'Este',SE:'Sureste',S:'Sur',SO:'Suroeste',O:'Oeste',NO:'Noroeste'};
+var DT={N:'kan',NE:'gen',E:'zhen',SE:'xun',S:'li',SO:'kun',O:'dui',NO:'qian'};
+var KT={1:'kan',2:'kun',3:'zhen',4:'xun',6:'qian',7:'dui',8:'gen',9:'li'};
+var P={sheng:[['kan','xun'],['li','zhen'],['kun','gen'],['qian','dui']],tian:[['kan','zhen'],['li','xun'],['kun','dui'],['qian','gen']],yan:[['kan','li'],['zhen','xun'],['kun','qian'],['gen','dui']],
+huo:[['kan','dui'],['li','gen'],['zhen','qian'],['xun','kun']],wu:[['kan','gen'],['li','dui'],['zhen','kun'],['xun','qian']],liu:[['kan','qian'],['li','kun'],['zhen','dui'],['xun','gen']],jue:[['kan','kun'],['li','qian'],['zhen','gen'],['xun','dui']]};
+var R={
+sheng:{n:'Prosperidad',a:'Sheng Chi',g:1,s:3,t:'La mejor orientación según la tradición. Se asocia con ánimo, ambición, oportunidades y avance en el trabajo y los proyectos.'},
+tian:{n:'Salud',a:'Tian Yi',g:1,s:2,t:'Se asocia con descanso reparador, bienestar y apoyo. Buena para recuperar energía.'},
+yan:{n:'Relaciones',a:'Yan Nian',g:1,s:2,t:'Se asocia con armonía en la pareja y la familia, y con vínculos estables.'},
+fu:{n:'Desarrollo personal',a:'Fu Wei',g:1,s:1,t:'Se asocia con calma, estabilidad y concentración. Buena para estudiar y reflexionar.'},
+huo:{n:'Contratiempos',a:'Huo Hai',g:0,s:1,t:'Se asocia con obstáculos pequeños, malentendidos y desgaste leve. Es la menos fuerte de las no favorables.'},
+wu:{n:'Cinco fantasmas',a:'Wu Gui',g:0,s:2,t:'Se asocia con inquietud, estrés e imprevistos.'},
+liu:{n:'Seis daños',a:'Liu Sha',g:0,s:2,t:'Se asocia con fricciones en las relaciones y en el trabajo.'},
+jue:{n:'Pérdida total',a:'Jue Ming',g:0,s:3,t:'La menos recomendable según la tradición. Se asocia con cansancio, desánimo y desgaste. Conviene evitarla.'}};
+var $=function(i){return document.getElementById(i)};
+var state=null,heading=0,shown=0,sensorOn=false,manual=false;
+
+function dirOf(t){return DIRS.filter(function(d){return DT[d]===t})[0]}
+function reduce(n){while(n>9){n=String(n).split('').reduce(function(a,c){return a+ +c},0)}return n}
+function calcKua(y,m,d,male){
+  var s=reduce(y),k;
+  if(male)k=y<2000?11-s:9-s;else k=y<2000?s+4:s+6;
+  k=reduce(k);if(k===0)k=9;
+  if(k===5)k=male?2:8;
+  return k;
+}
+function orient(k){
+  var t=KT[k],m={};
+  Object.keys(P).forEach(function(r){P[r].forEach(function(p){var o=p[0]===t?p[1]:p[1]===t?p[0]:null;if(o)m[dirOf(o)]=r})});
+  m[dirOf(t)]='fu';return m;
+}
+function stars(n){return new Array(n+1).join('★')}
+function byGood(m,g){return DIRS.filter(function(d){return R[m[d]].g===g}).sort(function(a,b){return R[m[b]].s-R[m[a]].s})}
+
+$('calc').onclick=function(){
+  var v=$('fecha').value;$('err').textContent='';
+  if(!v){$('err').textContent='Elige tu fecha de nacimiento.';return}
+  var p=v.split('-').map(Number),male=document.querySelector('input[name=gen]:checked').value==='m';
+  if(p[0]<1900||p[0]>new Date().getFullYear()){$('err').textContent='Revisa el año de nacimiento.';return}
+  var k=calcKua(p[0],p[1],p[2],male),m=orient(k),east=[1,3,4,9].indexOf(k)>-1;
+  state={k:k,m:m,east:east,date:v,male:male,y:p[0]};
+  $('kn').textContent=k;
+  $('kg').textContent='Grupo '+(east?'Este':'Oeste');
+  $('kg').className='chip '+(east?'g':'b');
+  $('kd').textContent='Año de nacimiento usado: '+p[0];
+  function row(d){var r=R[m[d]];return '<details class="o'+(r.g?'':' b')+'"><summary><span class="sn"><b>'+r.n+'</b><small>'+NAME[d]+'</small></span><span class="st" aria-label="'+r.s+' de 3">'+stars(r.s)+'</span></summary><p class="tx">'+r.t+'</p></details>'}
+  $('fav').innerHTML=byGood(m,1).map(row).join('');
+  $('unf').innerHTML=byGood(m,0).map(row).join('');
+  $('dd').style.display='none';
+  $('res').style.display='grid';
+  drawRose();update();
+  $('res').scrollIntoView({behavior:'smooth',block:'start'});
+};
+
+function pt(cx,cy,r,a){var t=a*Math.PI/180;return [cx+r*Math.sin(t),cy-r*Math.cos(t)]}
+function wedge(a0,a1,r0,r1){
+  var p1=pt(150,150,r1,a0),p2=pt(150,150,r1,a1),p3=pt(150,150,r0,a1),p4=pt(150,150,r0,a0);
+  return 'M'+p1+' A'+r1+' '+r1+' 0 0 1 '+p2+' L'+p3+' A'+r0+' '+r0+' 0 0 0 '+p4+' Z';
+}
+function drawRose(){
+  var s='<circle cx="150" cy="150" r="146" fill="var(--card)" stroke="var(--brass)" stroke-width="2"/><g id="rose">';
+  for(var t=0;t<360;t+=5){if(t%45===0)continue;var a=pt(150,150,141,t),b=pt(150,150,t%15===0?133:137,t);
+    s+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" stroke="var(--muted)" stroke-width="1"/>'}
+  DIRS.forEach(function(d,i){
+    var a=i*45,good=R[state.m[d]].g,q=pt(150,150,100,a);
+    s+='<path data-d="'+d+'" tabindex="0" role="button" aria-label="'+NAME[d]+': '+R[state.m[d]].n+'" d="'+wedge(a-21,a+21,64,130)+'" fill="'+(good?'var(--good)':'var(--bad)')+'" fill-opacity="'+(good?'.9':'.3')+'"/>';
+    s+='<text pointer-events="none" x="'+q[0]+'" y="'+q[1]+'" text-anchor="middle" dominant-baseline="central" font-size="'+(i%2?17:21)+'" font-weight="700" font-family="system-ui,sans-serif" fill="'+(good?'var(--on)':'var(--ink)')+'" transform="rotate('+a+' '+q[0]+' '+q[1]+')">'+d+'</text>';
+  });
+  s+='</g><circle cx="150" cy="150" r="50" fill="var(--card)" stroke="var(--line)"/>'+
+  '<text id="hd" x="150" y="150" text-anchor="middle" dominant-baseline="central" font-size="32" font-weight="600" font-family="Newsreader,Georgia,serif" fill="var(--ink)">0°</text>'+
+  '<path d="M150 2 L161 24 L139 24Z" fill="var(--brass)" stroke="var(--card)" stroke-width="2"/>';
+  $('comp').innerHTML=s;
+}
+function showDir(d){
+  var r=R[state.m[d]],el=$('dd');
+  el.className='dd '+(r.g?'g':'b');
+  el.innerHTML='<b>'+r.n+' · '+NAME[d]+' <span class="st">'+stars(r.s)+'</span></b><span>'+r.t+'</span>';
+  el.style.display='grid';
+}
+$('comp').addEventListener('click',function(e){var t=e.target.closest('[data-d]');if(t)showDir(t.getAttribute('data-d'))});
+$('comp').addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){var t=e.target.closest('[data-d]');if(t){e.preventDefault();showDir(t.getAttribute('data-d'))}}});
+
+function nearest(h){return DIRS[Math.round(((h%360)+360)%360/45)%8]}
+function setStatus(s,html){$('status').dataset.s=s;$('stx').innerHTML=html}
+function update(){
+  if(!state)return;
+  var r=$('rose');if(r)r.setAttribute('transform','rotate('+(-shown)+' 150 150)');
+  var h=Math.round(((heading%360)+360)%360),d=nearest(h),el=$('hd');if(el)el.textContent=h+'°';
+  if(!sensorOn&&!manual)return;
+  var q=R[state.m[d]];
+  setStatus(q.g?'good':'bad','Tu cabecera apunta al <b>'+NAME[d]+'</b>: <span class="'+(q.g?'g':'b')+'">'+q.n.toLowerCase()+(q.g?' (favorable)':' (no favorable)')+'</span>');
+}
+function setHeading(h){heading=h;var diff=((h-shown+540)%360)-180;shown=shown+diff*0.35;update()}
+function onOri(e){
+  var h=null;
+  if(typeof e.webkitCompassHeading==='number')h=e.webkitCompassHeading;
+  else if(e.alpha!=null&&(e.absolute||e.type==='deviceorientationabsolute'))h=360-e.alpha;
+  if(h==null)return;
+  sensorOn=true;setHeading(h);
+}
+$('start').onclick=async function(){
+  var DO=window.DeviceOrientationEvent,btn=this;
+  if(!DO){setStatus('idle','Este dispositivo no tiene brújula. Usa el ajuste manual.');return}
+  try{
+    if(typeof DO.requestPermission==='function'){
+      var r=await DO.requestPermission();
+      if(r!=='granted'){setStatus('idle','Permiso denegado. Usa el ajuste manual.');return}
+    }
+  }catch(e){setStatus('idle','No se pudo activar la brújula. Usa el ajuste manual.');return}
+  window.addEventListener('ondeviceorientationabsolute' in window?'deviceorientationabsolute':'deviceorientation',onOri,true);
+  btn.disabled=true;btn.textContent='Brújula activa';
+  setStatus('idle','Buscando señal… mueve el móvil en forma de 8 si tarda.');
+  setTimeout(function(){if(!sensorOn){btn.disabled=false;btn.textContent='Reintentar brújula';setStatus('idle','No llega señal (puede estar bloqueada en esta vista). Abre la página en tu navegador o usa el ajuste manual.')}},3000);
+};
+$('man').oninput=function(){manual=true;sensorOn=false;setHeading(+this.value);shown=heading;update()};
+
+function pdfDate(v){var p=v.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
+function star(doc,cx,cy,r){
+  var pts=[];for(var i=0;i<10;i++){var a=i*Math.PI/5,rr=i%2?r*0.42:r;pts.push([cx+rr*Math.sin(a),cy-rr*Math.cos(a)])}
+  var segs=[];for(var j=1;j<10;j++)segs.push([pts[j][0]-pts[j-1][0],pts[j][1]-pts[j-1][1]]);
+  doc.lines(segs,pts[0][0],pts[0][1],[1,1],'F',true);
+}
+function xbox(doc,x,y){doc.setLineWidth(0.4);doc.rect(x,y,3.6,3.6);doc.line(x,y,x+3.6,y+3.6);doc.line(x+3.6,y,x,y+3.6)}
+$('pdf').onclick=async function(){
+  var pe=$('perr');pe.textContent='';
+  if(!state||!window.jspdf){pe.textContent='No se pudo preparar el PDF. Recarga la página.';return}
+  try{
+    var J=window.jspdf.jsPDF,doc=new J({unit:'mm',format:'a4'}),m=state.m,y=22,W=170;
+    doc.setFont('helvetica','bold');doc.setFontSize(22);doc.setTextColor(20,20,20);
+    doc.text('CÓDIGO DE VIDA',105,y,{align:'center'});y+=8;
+    doc.setFont('helvetica','normal');doc.setFontSize(10.5);doc.setTextColor(90,90,90);
+    doc.text('Número Kua '+state.k+'  |  Grupo '+(state.east?'Este':'Oeste')+'  |  Nacimiento: '+pdfDate(state.date)+'  |  '+(state.male?'Hombre':'Mujer'),105,y,{align:'center'});y+=9;
+    doc.setFontSize(10);doc.setTextColor(40,40,40);
+    var intro=doc.splitTextToSize('Orientaciones para dormir según tu número Kua. Cada orientación indica hacia dónde apunta tu cabecera. Las estrellas marcan la intensidad dentro de su grupo, y la tradición recomienda dormir en las favorables.',W);
+    doc.text(intro,20,y);y+=intro.length*4.6+5;
+    function block(title,g,rgb){
+      doc.setFont('helvetica','bold');doc.setFontSize(12.5);doc.setTextColor(rgb[0],rgb[1],rgb[2]);
+      doc.text(title,20,y);y+=3;doc.setDrawColor(rgb[0],rgb[1],rgb[2]);doc.setLineWidth(0.5);doc.line(20,y,190,y);y+=7;
+      byGood(m,g).forEach(function(d){
+        var r=R[m[d]],x=20;
+        doc.setFillColor(rgb[0],rgb[1],rgb[2]);doc.setDrawColor(rgb[0],rgb[1],rgb[2]);
+        if(g){for(var i=0;i<r.s;i++){star(doc,x+2+i*5.2,y-1.3,2.3)};x+=r.s*5.2+2}
+        else{xbox(doc,x,y-3.4);x+=6.5}
+        doc.setFont('helvetica','bold');doc.setFontSize(10.5);doc.setTextColor(20,20,20);
+        doc.text((r.n+' ('+NAME[d]+')').toUpperCase(),x,y);y+=5;
+        doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.setTextColor(60,60,60);
+        var l=doc.splitTextToSize(r.t,W-2);doc.text(l,22,y);y+=l.length*4.2+4;
+      });
+      y+=3;
+    }
+    block('ORIENTACIONES FAVORABLES',1,[31,122,109]);
+    block('ORIENTACIONES NO FAVORABLES',0,[196,67,44]);
+    doc.setFont('helvetica','italic');doc.setFontSize(9);doc.setTextColor(90,90,90);
+    doc.text(doc.splitTextToSize('Si duermes en una orientación no favorable, la tradición aconseja pasar a una favorable. Es una práctica tradicional de Feng Shui (escuela Ba Zhai), sin respaldo científico: úsala como orientación cultural, no para decisiones de salud o dinero.',W),20,Math.min(y+2,280));
+    doc.addPage();
+    doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(20,20,20);
+    doc.text('TU BRÚJULA',105,24,{align:'center'});
+    doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(90,90,90);
+    doc.text('Número Kua '+state.k+'  |  Norte arriba',105,31,{align:'center'});
+    var cx=105,cy=122,RAD=50,r0=17,GR=[31,122,109],BD=[240,190,176];
+    var sector=function(a0,a1,rgb){
+      var pts=[],i,n=10,a;
+      for(i=0;i<=n;i++){a=(a0+(a1-a0)*i/n)*Math.PI/180;pts.push([cx+RAD*Math.sin(a),cy-RAD*Math.cos(a)])}
+      for(i=n;i>=0;i--){a=(a0+(a1-a0)*i/n)*Math.PI/180;pts.push([cx+r0*Math.sin(a),cy-r0*Math.cos(a)])}
+      var segs=[];for(i=1;i<pts.length;i++)segs.push([pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]]);
+      doc.setFillColor(rgb[0],rgb[1],rgb[2]);doc.setDrawColor(255,255,255);doc.setLineWidth(0.6);
+      doc.lines(segs,pts[0][0],pts[0][1],[1,1],'FD',true);
+    };
+    DIRS.forEach(function(d,i){
+      var q=R[m[d]],ang=i*45,t=ang*Math.PI/180,s=Math.sin(t),c=Math.cos(t);
+      sector(ang-22.5,ang+22.5,q.g?GR:BD);
+      doc.setFont('helvetica','bold');doc.setFontSize(12);
+      if(q.g)doc.setTextColor(255,255,255);else doc.setTextColor(90,25,18);
+      doc.text(d,cx+33*s,cy-33*c+1.6,{align:'center'});
+      var bx=cx+(RAD+6)*s,by=cy-(RAD+6)*c,al=s>0.4?'left':(s<-0.4?'right':'center'),y1,y2;
+      if(c>0.5){y1=by-5;y2=by-1}else if(c<-0.5){y1=by+4;y2=by+8}else{y1=by-0.5;y2=by+3.5}
+      doc.setFont('helvetica','bold');doc.setFontSize(9.5);
+      if(q.g)doc.setTextColor(31,122,109);else doc.setTextColor(196,67,44);
+      doc.text(q.n,bx,y1,{align:al});
+      doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(90,90,90);
+      doc.text(NAME[d],bx,y2,{align:al});
+    });
+    doc.setFillColor(255,255,255);doc.circle(cx,cy,r0-1.5,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(148,101,26);
+    doc.text(String(state.k),cx,cy+2.4,{align:'center'});
+    doc.setFillColor(GR[0],GR[1],GR[2]);doc.rect(55,205,5,5,'F');
+    doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(40,40,40);
+    doc.text('Favorable: orienta la cabecera hacia aquí',63,209);
+    doc.setFillColor(BD[0],BD[1],BD[2]);doc.rect(55,214,5,5,'F');
+    doc.text('No favorable: conviene evitarla',63,218);
+    doc.setFontSize(9);doc.setTextColor(90,90,90);
+    doc.text(doc.splitTextToSize('Apoya el móvil o una brújula sobre la cama y comprueba hacia qué punto queda la cabecera. Práctica tradicional sin respaldo científico.',W),20,236);
+    var blob=doc.output('blob');
+    var fname='codigo-de-vida-kua-'+state.k+'.pdf';
+    var dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;
+    if(dl){await dl.save({filename:fname,data:blob})}else{doc.save(fname)}
+  }catch(e){
+    if(e&&e.code==='declined')return;
+    pe.textContent='No se pudo guardar el PDF. Inténtalo de nuevo.';
+  }
+};
+})();
+</script>
+</body>
+</html>
